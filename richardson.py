@@ -108,11 +108,11 @@ class Richardson:
         )
 
 
-if __name__ == "__main__":
-    r = Richardson()
-    for i in range(100):
-        r.mutate()
-        r.perform_calculations()
-        print(r.fitness)
-        print("----------------")
+# if __name__ == "__main__":
+#     r = Richardson()
+#     for i in range(100):
+#         r.mutate()
+#         r.perform_calculations()
+#         print(r.fitness)
+#         print("----------------")
 
