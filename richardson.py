@@ -107,6 +107,9 @@ class Richardson:
             k_others=random.uniform(0, 1)
         )
 
+    def __lt__(self, other):
+        return self.fitness < other.fitness
+
 
 # if __name__ == "__main__":
 #     r = Richardson()
