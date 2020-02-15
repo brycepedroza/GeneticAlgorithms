@@ -1,8 +1,7 @@
-from richardson import *
+from code.richardson import *
 import copy
-import logger
+from code import logger
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 
 
@@ -126,7 +125,7 @@ class GeneticAlgorithm:
 
 if __name__ == "__main__":
 
-    log_file = "test.log"
+    log_file = "../logs/gen_alg.log"
     logger.create_rotating_log(log_file)
     log = logger.logger
     log.info("----- Starting Genetic Algorithm -----")

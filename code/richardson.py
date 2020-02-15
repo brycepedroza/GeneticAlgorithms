@@ -1,12 +1,6 @@
 import random
 import logging
-# import logger
 logger = logging.getLogger()
-
-
-class Rates:
-    def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)
 
 
 class Country:
