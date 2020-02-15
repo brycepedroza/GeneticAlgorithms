@@ -1,4 +1,7 @@
 import random
+import logging
+# import logger
+logger = logging.getLogger()
 
 
 class Rates:
@@ -26,7 +29,7 @@ class Richardson:
         self.fitness = -1
         self.mutation_rate = 0.9  # Probability to mutate a value
 
-    def mutate(self):
+    def mutate(self, individual=-1):
         """
         http://www.geatbx.com/docu/algindex-04.html
         We mutate one of the fields if a random number from 0-1 that we pick
@@ -41,24 +44,24 @@ class Richardson:
             random_country = self.__getattribute__(temp_name)
             random_value = random.choice(
                 ['expend', 'econ_rest', 'k_self', 'k_others'])
-            temp_value = random_country.__getattribute__(random_value)
-            print(temp_name, random_value, temp_value)  # TODO: update to log
+            temp_value1 = random_country.__getattribute__(random_value)
 
             # Mutate value by 5% Either add or subtract.
             if random.randint(0, 1) == 1:
-                temp_value += temp_value * .05
+                temp_value2 = temp_value1 + temp_value1 * .05
             else:
-                temp_value -= temp_value * .05
+                temp_value2 = temp_value1 - temp_value1 * .05
 
             # Make sure the value is in between 0 and 1
-            if temp_value > 1:
-                temp_value = 1
-            elif temp_value < 0:
-                temp_value = 0
+            if temp_value2 > 1:
+                temp_value2 = 1
+            elif temp_value2 < 0:
+                temp_value2 = 0
 
-            random_country.__setattr__(random_value, temp_value)
+            random_country.__setattr__(random_value, temp_value2)
+            logger.debug(f"Mutating individual {individual}'s {random_value} from country {temp_name} to {temp_value2}, from {temp_value1}")
 
-    def perform_calculations(self):
+    def perform_calculations(self, individual=-1):
         if self.x.dominant:
             Richardson.calculate_spending(self.x, self.y, self.z)
             self.fitness = Richardson.calculate_fitness(self.x, self.y, self.z)
@@ -68,7 +71,11 @@ class Richardson:
         elif self.z.dominant:
             Richardson.calculate_spending(self.z, self.y, self.x)
             self.fitness = Richardson.calculate_fitness(self.z, self.y, self.x)
-        # TODO: potentially recalculate the dominant country and fitness after
+
+    def reset_current_spending(self):
+        self.x.curr = 0
+        self.y.curr = 0
+        self.z.curr = 0
 
     @staticmethod
     def calculate_fitness(dominant, a, b):
@@ -89,11 +96,11 @@ class Richardson:
                 b.k_others * (dominant.curr-a.curr)) * \
             (b.econ_rest-b.curr)
         # Is a the new biggest?
-        if a.curr >= dominant.curr and a.curr >= b.curr:
+        if a.curr > dominant.curr and a.curr > b.curr:
             dominant.dominant = False
             a.dominant = True
         # Is b the new biggest?
-        if b.curr >= dominant.curr and b.curr >= a.curr:
+        if b.curr > dominant.curr and b.curr > a.curr:
             dominant.dominant = False
             b.dominant = True
 
@@ -107,15 +114,13 @@ class Richardson:
             k_others=random.uniform(0, 1)
         )
 
+    def get_county_props(self):
+        return {
+            'x': self.x.__dict__,
+            'y': self.y.__dict__,
+            'z': self.z.__dict__
+        }
+
     def __lt__(self, other):
         return self.fitness < other.fitness
-
-
-# if __name__ == "__main__":
-#     r = Richardson()
-#     for i in range(100):
-#         r.mutate()
-#         r.perform_calculations()
-#         print(r.fitness)
-#         print("----------------")
 
