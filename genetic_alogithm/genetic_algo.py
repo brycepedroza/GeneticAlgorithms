@@ -1,16 +1,16 @@
-from code.richardson import *
+from genetic_alogithm.richardson import *
 import copy
 
 logger = logging.getLogger()
 
 
 class GeneticAlgorithm:
-    def __init__(self, population, crossover_rate):
-        logger.info(f"Population: {population} Crossover: {crossover_rate}")
+    def __init__(self, population, crossover_rate, mutation_rate):
+        logger.info(f"Population: {population} Crossover: {crossover_rate} Mutation Rate: {mutation_rate}")
         self.population = []
         self.crossover_rate = crossover_rate
         for i in range(population):
-            self.population.append(Richardson())
+            self.population.append(Richardson(mutation_rate=mutation_rate))
         self.best_individuals = []
         self.average_fitness = []
 

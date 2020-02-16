@@ -11,7 +11,7 @@ class Country:
 
 
 class Richardson:
-    def __init__(self, new=True, x=None, y=None, z=None):
+    def __init__(self, new=True, x=None, y=None, z=None, mutation_rate=0.9):
         if new:
             self.x = Richardson.new_country(dominant=True)
             self.y = Richardson.new_country()
@@ -21,7 +21,7 @@ class Richardson:
             self.y = y
             self.z = z
         self.fitness = -1
-        self.mutation_rate = 0.9  # Probability to mutate a value
+        self.mutation_rate = mutation_rate
 
     def mutate(self, individual=-1):
         """
