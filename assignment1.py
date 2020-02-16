@@ -7,8 +7,8 @@ import numpy as np
 
 # Change these as you wish :)
 POPULATION = 100
-CROSSOVER_RATE = 0.4
-MUTATION_RATE = 0.8
+CROSSOVER_RATE = 0.5
+MUTATION_RATE = 0.9
 NUM_GENERATIONS = 100
 
 
@@ -68,21 +68,27 @@ if __name__ == "__main__":
 
     # Let's calculate how far off the lines are from eventually coming to a steady state.
     # x_ssd = np.sum(np.square(np.array(x_no_reset) - np.array(x_reset)))
-    x_ssd = np.mean((np.array(x_reset) - np.array(x_no_reset)) ** 2) / np.max(x_no_reset)
+    x_nrmsd = np.sqrt(
+        np.mean((np.array(x_reset) - np.array(x_no_reset))) ** 2) \
+        / (np.max(x_no_reset))
     # y_ssd = np.sum(np.square(np.array(y_no_reset) - np.array(y_reset)))
-    y_ssd = np.mean((np.array(y_reset) - np.array(y_no_reset)) ** 2) / np.max(y_no_reset)
+    y_nrmsd = np.sqrt(
+        np.mean((np.array(y_reset) - np.array(y_no_reset))) ** 2) \
+        / (np.max(y_no_reset))
     # z_ssd = np.sum(np.square(np.array(z_no_reset) - np.array(z_reset)))
-    z_ssd = np.mean((np.array(z_reset) - np.array(z_no_reset)) ** 2) / np.max(z_no_reset)
-    # The larger the ssd, the worse the result, we want something close to 0 (exact same)
-    avg_ssd = (x_ssd + y_ssd + z_ssd)/3
-    print(np.max(x_no_reset))
+    z_nrmsd = np.sqrt(
+        np.mean((np.array(z_reset) - np.array(z_no_reset))) ** 2) \
+        / (np.max(z_no_reset))
+
+    # The larger the ssd, the worse the result
+    nrmsd = (x_nrmsd + y_nrmsd + z_nrmsd)/3
     # Final Results
     log.info("Population, Crossover, Mutation, Generations, "
              "Average Fitness, Best Fitness, Average ssd, xssd, yssd, zssd")
     log.info(f"{POPULATION}\t{CROSSOVER_RATE}\t{MUTATION_RATE}\t"
-             f"{NUM_GENERATIONS}\t{average_fitness}\t{best_fitness}\t{avg_ssd}\t{x_ssd}\t{y_ssd}\t{z_ssd}")
-    print(f"{POPULATION}\t{CROSSOVER_RATE}\t{MUTATION_RATE}\t"
-          f"{NUM_GENERATIONS}\t{average_fitness}\t{best_fitness}\t{avg_ssd}\t{x_ssd}\t{y_ssd}\t{z_ssd}")
+             f"{NUM_GENERATIONS}\t{average_fitness}\t{best_fitness}\t{nrmsd}\t{x_nrmsd}\t{y_nrmsd}\t{z_nrmsd}")
+    print(f"{POPULATION},{CROSSOVER_RATE},{MUTATION_RATE},"
+          f"{NUM_GENERATIONS},{average_fitness},{best_fitness},{nrmsd},{x_nrmsd},{y_nrmsd},{z_nrmsd}")
 
     # multiple line plot
     fig, axs = plt.subplots(2, figsize=(12, 8))
