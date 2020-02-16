@@ -5,13 +5,14 @@ logger = logging.getLogger()
 
 class Country:
     def __init__(self, dominant=False, **kwargs):
-        self.__dict__.update(kwargs)
         self.dominant = dominant
         self.curr = 0
+        self.__dict__.update(kwargs)
+
 
 
 class Richardson:
-    def __init__(self, new=True, x=None, y=None, z=None, mutation_rate=0.9):
+    def __init__(self, new=True, x=None, y=None, z=None, mutation_rate=0.9, normalize=False):
         if new:
             self.x = Richardson.new_country(dominant=True)
             self.y = Richardson.new_country()
@@ -22,6 +23,7 @@ class Richardson:
             self.z = z
         self.fitness = -1
         self.mutation_rate = mutation_rate
+        self.normalize = normalize
 
     def mutate(self, individual=-1):
         """
@@ -55,25 +57,54 @@ class Richardson:
             random_country.__setattr__(random_value, temp_value2)
             logger.debug(f"Mutating individual {individual}'s {random_value} from country {temp_name} to {temp_value2}, from {temp_value1}")
 
-    def perform_calculations(self, individual=-1):
+    def perform_calculations(self):
+
         if self.x.dominant:
             Richardson.calculate_spending(self.x, self.y, self.z)
-            self.fitness = Richardson.calculate_fitness(self.x, self.y, self.z)
         elif self.y.dominant:
             Richardson.calculate_spending(self.y, self.x, self.z)
-            self.fitness = Richardson.calculate_fitness(self.y, self.x, self.z)
         elif self.z.dominant:
             Richardson.calculate_spending(self.z, self.y, self.x)
-            self.fitness = Richardson.calculate_fitness(self.z, self.y, self.x)
+
+        # Is x the biggest?
+        if self.x.curr > self.y.curr and self.x.curr > self.z.curr:
+            self.x.dominant = True
+            self.y.dominant = False
+            self.z.dominant = False
+        # Is y the biggest?
+        if self.y.curr > self.x.curr and self.y.curr > self.z.curr:
+            self.y.dominant = True
+            self.x.dominant = False
+            self.z.dominant = False
+        # Is z the biggest?
+        if self.z.curr > self.y.curr and self.z.curr > self.x.curr:
+            self.z.dominant = True
+            self.y.dominant = False
+            self.x.dominant = False
+
+        if self.x.dominant:
+            self.fitness = Richardson.calculate_fitness(self.x, self.y, self.z, self.normalize)
+        elif self.y.dominant:
+            self.fitness = Richardson.calculate_fitness(self.y, self.x, self.z, self.normalize)
+        elif self.z.dominant:
+            self.fitness = Richardson.calculate_fitness(self.z, self.y, self.x, self.normalize)
 
     def reset_current_spending(self):
         self.x.curr = 0
         self.y.curr = 0
         self.z.curr = 0
+        # reset who is dominating too, x is default
+        self.x.dominant = True
+        self.y.dominant = False
+        self.z.dominant = False
 
     @staticmethod
-    def calculate_fitness(dominant, a, b):
-        return abs(dominant.curr - (a.curr + b.curr))
+    def calculate_fitness(dominant, a, b, normalize):
+
+        fitness = abs(dominant.curr - (a.curr + b.curr))
+        if normalize:
+            fitness = fitness/abs(dominant.curr-min(a.curr, b.curr))
+        return fitness
 
     @staticmethod
     def calculate_spending(dominant: Country, a: Country, b: Country):
@@ -89,14 +120,14 @@ class Richardson:
                 b.k_self * (b.expend-b.curr) +
                 b.k_others * (dominant.curr-a.curr)) * \
             (b.econ_rest-b.curr)
-        # Is a the new biggest?
-        if a.curr > dominant.curr and a.curr > b.curr:
-            dominant.dominant = False
-            a.dominant = True
-        # Is b the new biggest?
-        if b.curr > dominant.curr and b.curr > a.curr:
-            dominant.dominant = False
-            b.dominant = True
+        # # Is a the new biggest?
+        # if a.curr > dominant.curr and a.curr > b.curr:
+        #     dominant.dominant = False
+        #     a.dominant = True
+        # # Is b the new biggest?
+        # if b.curr > dominant.curr and b.curr > a.curr:
+        #     dominant.dominant = False
+        #     b.dominant = True
 
     @staticmethod
     def new_country(dominant=False):

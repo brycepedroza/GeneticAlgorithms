@@ -5,12 +5,12 @@ logger = logging.getLogger()
 
 
 class GeneticAlgorithm:
-    def __init__(self, population, crossover_rate, mutation_rate):
+    def __init__(self, population, crossover_rate, mutation_rate, normalize):
         logger.info(f"Population: {population} Crossover: {crossover_rate} Mutation Rate: {mutation_rate}")
         self.population = []
         self.crossover_rate = crossover_rate
         for i in range(population):
-            self.population.append(Richardson(mutation_rate=mutation_rate))
+            self.population.append(Richardson(mutation_rate=mutation_rate, normalize=normalize))
         self.best_individuals = []
         self.average_fitness = []
 
@@ -69,7 +69,7 @@ class GeneticAlgorithm:
         :return:
         """
         for i in range(len(self.population)):
-            self.population[i].perform_calculations(individual=i)
+            self.population[i].perform_calculations()
         fitness_vals = ",".join([str(i.fitness) for i in self.population])
         logger.info(f"New fitness values: {fitness_vals}")
 
