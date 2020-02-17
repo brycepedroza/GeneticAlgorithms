@@ -10,7 +10,6 @@ class Country:
         self.__dict__.update(kwargs)
 
 
-
 class Richardson:
     def __init__(self, new=True, x=None, y=None, z=None, mutation_rate=0.9, normalize=False):
         if new:
@@ -27,7 +26,6 @@ class Richardson:
 
     def mutate(self, individual=-1):
         """
-        http://www.geatbx.com/docu/algindex-04.html
         We mutate one of the fields if a random number from 0-1 that we pick
         is less than the mutation rate. ie. if our mutation rate is .9,
         and the random is less or equal then we mutate, thus simulating a
@@ -55,7 +53,8 @@ class Richardson:
                 temp_value2 = 0
 
             random_country.__setattr__(random_value, temp_value2)
-            logger.debug(f"Mutating individual {individual}'s {random_value} from country {temp_name} to {temp_value2}, from {temp_value1}")
+            logger.debug(f"Mutating individual {individual}'s {random_value} "
+                         f"from country {temp_name} to {temp_value2}, from {temp_value1}")
 
     def perform_calculations(self):
 
@@ -120,14 +119,6 @@ class Richardson:
                 b.k_self * (b.expend-b.curr) +
                 b.k_others * (dominant.curr-a.curr)) * \
             (b.econ_rest-b.curr)
-        # # Is a the new biggest?
-        # if a.curr > dominant.curr and a.curr > b.curr:
-        #     dominant.dominant = False
-        #     a.dominant = True
-        # # Is b the new biggest?
-        # if b.curr > dominant.curr and b.curr > a.curr:
-        #     dominant.dominant = False
-        #     b.dominant = True
 
     @staticmethod
     def new_country(dominant=False):
