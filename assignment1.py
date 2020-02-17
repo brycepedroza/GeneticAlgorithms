@@ -7,7 +7,7 @@ import sys
 import argparse
 
 # Change these as you wish :)
-POPULATION = 100
+POPULATION = 75
 CROSSOVER_RATE = 0.4
 MUTATION_RATE = 0.8
 NUM_GENERATIONS = 100
@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     # Perform GA
     g = GeneticAlgorithm(args.population, args.crossover, args.mutation, args.normalize)
-    for x in range(NUM_GENERATIONS):
+    for x in range(args.generations):
         g.iterate_population()
 
     # Log average fitness across all generations
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     fitness_no_reset = []
 
     # We will only consider the fittest individual in the calculation
-    for x in range(NUM_GENERATIONS):
+    for x in range(args.generations):
         x_no_reset.append(g.best_individuals[0].x.curr)
         y_no_reset.append(g.best_individuals[0].y.curr)
         z_no_reset.append(g.best_individuals[0].z.curr)
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     y_reset = []
     z_reset = []
     fitness_reset = []
-    for x in range(NUM_GENERATIONS):
+    for x in range(args.generations):
         x_reset.append(g.best_individuals[0].x.curr)
         y_reset.append(g.best_individuals[0].y.curr)
         z_reset.append(g.best_individuals[0].z.curr)
@@ -123,7 +123,7 @@ if __name__ == "__main__":
 
     # Display results
     if not args.hide:
-        df = pd.DataFrame({'domain': range(NUM_GENERATIONS),
+        df = pd.DataFrame({'domain': range(args.generations),
                            'X without Reset': x_no_reset,
                            'Y without Reset': y_no_reset,
                            'Z without Reset': z_no_reset,
@@ -145,6 +145,6 @@ if __name__ == "__main__":
 
         axs[1].legend()
         axs[0].set_title('Average Fitness')
-        axs[0].plot(range(NUM_GENERATIONS), g.average_fitness, marker='', color='black', linewidth=2)
+        axs[0].plot(range(args.generations), g.average_fitness, marker='', color='black', linewidth=2)
         plt.show(block=True)
 
